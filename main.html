@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JobLokal – Local Jobs, Real Opportunities</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav>
+  <div class="logo">Job<span>Lokal</span></div>
+  <div class="nav-links">
+    <button class="nav-btn ghost" onclick="openTab('find')">Browse Jobs</button>
+    <button class="nav-btn ghost" onclick="openModal('post-modal')">Post a Job</button>
+    <button class="nav-btn primary" onclick="openModal('apply-modal')">Apply</button>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>Local Jobs, <em>Real Opportunities</em></h1>
+  <p>Find and post jobs in your local community. Connect with neighbors and grow together.</p>
+
+  <div class="community-bar">
+    <div class="comm-chips">
+      <button class="comm-chip active" onclick="filterCommunity(this,'All')">All Communities</button>
+      <button class="comm-chip" onclick="filterCommunity(this,'Poblacion')">Poblacion</button>
+      <button class="comm-chip" onclick="filterCommunity(this,'Calicanto')">Calicanto</button>
+      <button class="comm-chip" onclick="filterCommunity(this,'Balagtas')">Balagtas</button>
+      <button class="comm-chip" onclick="filterCommunity(this,'Santa Clara')">Santa Clara</button>
+      <button class="comm-chip" onclick="filterCommunity(this,'Bolbok')">Bolbok</button>
+    </div>
+    <div class="comm-dropdown">
+      <select id="communitySelect" onchange="filterCommunityBySelect(this)">
+        <option value="">More Communities...</option>
+        <option value="Alangilan">Alangilan</option>
+        <option value="Cuta">Cuta</option>
+        <option value="Dumantay">Dumantay</option>
+        <option value="Gulod Itaas">Gulod Itaas</option>
+        <option value="Kumintang Ibaba">Kumintang Ibaba</option>
+        <option value="Libjo">Libjo</option>
+        <option value="Mahabang Parang">Mahabang Parang</option>
+        <option value="Pallocan Kanluran">Pallocan Kanluran</option>
+        <option value="Sampaga">Sampaga</option>
+        <option value="Tabangao Ambulong">Tabangao Ambulong</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="search-row">
+    <input type="text" id="searchInput" placeholder="Search job title, skill, or company…" oninput="applyFilters()">
+    <button onclick="applyFilters()">Search</button>
+  </div>
+  <div class="filters">
+    <select class="filter-select" id="ageFilter" onchange="applyFilters()">
+      <option value="">Any Age</option>
+      <option>18-25</option><option>26-35</option><option>36-45</option><option>46+</option>
+    </select>
+    <select class="filter-select" id="typeFilter" onchange="applyFilters()">
+      <option value="">Any Type</option>
+      <option>Full-Time</option><option>Part-Time</option><option>Freelance</option><option>Apprentice</option>
+    </select>
+    <select class="filter-select" id="skillFilter" onchange="applyFilters()">
+      <option value="">Any Skill</option>
+      <option>Carpentry</option><option>Cooking</option><option>Driving</option>
+      <option>Electrician</option><option>Sewing</option><option>IT</option><option>Farming</option><option>Plumbing</option>
+    </select>
+    <select class="filter-select" id="wageFilter" onchange="applyFilters()">
+      <option value="">Any Wage</option>
+      <option value="500">₱500+/day</option><option value="600">₱600+/day</option><option value="800">₱800+/day</option>
+    </select>
+  </div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat"><div class="stat-num" id="statJobs">6</div><div class="stat-label">Active Jobs</div></div>
+  <div class="stat"><div class="stat-num">5</div><div class="stat-label">Communities</div></div>
+  <div class="stat"><div class="stat-num" id="statApps">0</div><div class="stat-label">Applications Sent</div></div>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" id="tab-find" onclick="openTab('find')">Find Jobs</button>
+  <button class="tab-btn" id="tab-skill" onclick="openTab('skill')">Skill Gap Advisor</button>
+</div>
+
+<div class="main">
+  <div id="panel-find">
+    <div class="job-list" id="jobList"></div>
+    <div class="empty" id="emptyState" style="display:none">
+      <p>No jobs found. Try adjusting your filters or post a new one!</p>
+    </div>
+  </div>
+
+  <div id="panel-skill" style="display:none">
+    <div class="skill-gap-section">
+      <h3>Skill Gap Recommendation System</h3>
+      <p>Select your current skills and we'll show you what to learn next to unlock more local job opportunities.</p>
+      <div class="form-row" style="margin-bottom:14px">
+        <select class="form-control" id="mySkill1">
+          <option value="">My skill #1</option>
+          <option>Carpentry</option><option>Cooking</option><option>Driving</option>
+          <option>Electrician</option><option>Sewing</option><option>IT</option><option>Farming</option><option>Plumbing</option>
+          <option value="custom">Add Custom Skill...</option>
+        </select>
+        <select class="form-control" id="mySkill2">
+          <option value="">My skill #2 (optional)</option>
+          <option>Carpentry</option><option>Cooking</option><option>Driving</option>
+          <option>Electrician</option><option>Sewing</option><option>IT</option><option>Farming</option><option>Plumbing</option>
+          <option value="custom">Add Custom Skill...</option>
+        </select>
+      </div>
+      <div class="form-row" id="customSkillRow" style="margin-bottom:14px; display:none">
+        <input class="form-control" id="customSkill1" placeholder="Enter your custom skill #1" style="display:none">
+        <input class="form-control" id="customSkill2" placeholder="Enter your custom skill #2" style="display:none">
+      </div>
+      <button class="btn-submit" style="max-width:220px" onclick="runSkillGap()">Analyze My Skills →</button>
+    </div>
+    <div id="skillGapResult" style="display:none">
+      <div class="skill-gap-section">
+        <h3 style="margin-bottom:10px">Skills You Have</h3>
+        <div class="skill-list" id="haveSkills"></div>
+        <h3 style="margin-bottom:10px">Skills to Unlock More Jobs</h3>
+        <div class="skill-list" id="needSkills"></div>
+        <h3 style="margin-bottom:10px">Recommended Micro-Courses</h3>
+        <div class="course-recs" id="courseRecs"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- POST JOB MODAL -->
+<div class="modal-overlay" id="post-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('post-modal')">×</button>
+    <div id="post-form-wrap">
+      <h2>Post a Job</h2>
+      <p class="modal-sub">List a job opening exclusively in your barangay community.</p>
+      <div class="form-group"><label>Job Title *</label><input class="form-control" id="p-title" placeholder="e.g. Carpenter Helper"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Company / Your Name</label><input class="form-control" id="p-company" placeholder="e.g. Reyes Construction"></div>
+        <div class="form-group"><label>Community *</label>
+          <select class="form-control" id="p-comm">
+            <option value="">Select community</option>
+            <option>Poblacion</option><option>Alangilan</option><option>Balagtas</option><option>Bolbok</option>
+            <option>Calicanto</option><option>Cuta</option><option>Dumantay</option><option>Gulod Itaas</option>
+            <option>Kumintang Ibaba</option><option>Libjo</option><option>Mahabang Parang</option><option>Pallocan Kanluran</option>
+            <option>Sampaga</option><option>Santa Clara</option><option>Tabangao Ambulong</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Job Type</label>
+          <select class="form-control" id="p-type"><option>Full-Time</option><option>Part-Time</option><option>Freelance</option><option>Apprentice</option></select>
+        </div>
+        <div class="form-group"><label>Age Requirement</label>
+          <select class="form-control" id="p-age"><option>18-25</option><option>26-35</option><option>36-45</option><option>46+</option><option value="Any">Any Age</option></select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Daily Wage (₱)</label><input class="form-control" id="p-wage" type="number" placeholder="e.g. 600"></div>
+        <div class="form-group"><label>Required Skill</label>
+          <select class="form-control" id="p-skill">
+            <option value="">None specific</option>
+            <option>Carpentry</option><option>Cooking</option><option>Driving</option>
+            <option>Electrician</option><option>Sewing</option><option>IT</option><option>Farming</option><option>Plumbing</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label>Job Description</label><textarea class="form-control" id="p-desc" placeholder="Responsibilities, schedule, location, requirements…"></textarea></div>
+      <button class="btn-submit" onclick="postJob()">Post Job</button>
+    </div>
+    <div class="success-msg" id="post-success">
+      <div class="check">✓</div>
+      <h3>Job Posted Successfully!</h3>
+      <p>Your listing is now live on the community board.</p>
+    </div>
+  </div>
+</div>
+
+<!-- APPLY MODAL -->
+<div class="modal-overlay" id="apply-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('apply-modal')">×</button>
+    <div id="apply-form-wrap">
+      <h2>Apply for a Job</h2>
+      <p class="modal-sub" id="apply-job-title">Complete the form to submit your application.</p>
+      <div class="form-row">
+        <div class="form-group"><label>Full Name *</label><input class="form-control" id="a-name" placeholder="Juan dela Cruz"></div>
+        <div class="form-group"><label>Age *</label><input class="form-control" id="a-age" type="number" placeholder="e.g. 24"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Contact Number</label><input class="form-control" id="a-contact" placeholder="09xxxxxxxxx"></div>
+        <div class="form-group"><label>Your Community</label>
+          <select class="form-control" id="a-comm">
+            <option>Poblacion</option><option>Alangilan</option><option>Balagtas</option><option>Bolbok</option>
+            <option>Calicanto</option><option>Cuta</option><option>Dumantay</option><option>Gulod Itaas</option>
+            <option>Kumintang Ibaba</option><option>Libjo</option><option>Mahabang Parang</option><option>Pallocan Kanluran</option>
+            <option>Sampaga</option><option>Santa Clara</option><option>Tabangao Ambulong</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label>Your Skills</label><input class="form-control" id="a-skills" placeholder="e.g. Carpentry, Driving, Cooking"></div>
+      <div class="form-group"><label>Short Introduction</label><textarea class="form-control" id="a-intro" placeholder="Tell the employer a bit about yourself…"></textarea></div>
+      <button class="btn-submit" onclick="submitApplication()">Submit Application</button>
+    </div>
+    <div class="success-msg" id="apply-success">
+      <div class="check">✓</div>
+      <h3>Application Sent!</h3>
+      <p>The employer will reach out to you soon. Stay tuned!</p>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
